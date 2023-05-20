@@ -1,0 +1,62 @@
+version: '3'
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.7.0
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+
+  kafka:
+    image: bitnami/kafka:2.8.1
+    restart: always
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+
+  device_1:
+    build: ./device
+    restart: always
+    depends_on:
+      - kafka
+    environment:
+      DEVICE_ID: 1
+      DELTA_T: 5000
+      KAFKA_TOPIC: temperatures
+    command: node device.js
+
+  device_2:
+    build: ./device
+    restart: always
+    depends_on:
+      - kafka
+    environment:
+      DEVICE_ID: 2
+      DELTA_T: 10000
+      KAFKA_TOPIC: temperatures
+    command: node device.js
+
+  consumer_1:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device_1
+    environment:
+      KAFKA_TOPIC: temperatures
+      GROUP_ID: test-group1
+    command: node consumer.js
+
+  consumer_2:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device_1
+    environment:
+      KAFKA_TOPIC: temperatures
+      GROUP_ID: test-group2
+    command: node consumer.js

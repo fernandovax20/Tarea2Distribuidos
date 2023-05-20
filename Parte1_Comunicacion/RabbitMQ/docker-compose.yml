@@ -1,0 +1,55 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  device_1:
+    build: ./device
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq
+      - QUEUE=temperatures
+      - DEVICE_ID=Device 1
+      - DELTA_T=5000
+    command: node device.js
+
+  device_2:
+    build: ./device
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq
+      - QUEUE=temperatures
+      - DEVICE_ID=Device 2
+      - DELTA_T=10000
+    command: node device.js
+
+  consumer_1:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device_1
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq
+      - QUEUE=temperatures
+      - CONSUMER_ID=Consumer 1
+    command: node consumer.js
+
+  consumer_2:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device_1
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq
+      - QUEUE=temperatures
+      - CONSUMER_ID=Consumer 2
+    command: node consumer.js
+

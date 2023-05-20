@@ -1,0 +1,13 @@
+{
+    "name": "consumer",
+    "version": "1.0.0",
+    "description": "",
+    "main": "consumer.js",
+    "dependencies": {
+      "kafkajs": "^1.15.0"
+    },
+    "scripts": {
+      "start": "node consumer.js"
+    }
+  }
+  

@@ -1,0 +1,17 @@
+{
+  "name": "iot-consumer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "consumer.js",
+  "scripts": {
+    "start": "node consumer.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.8.0"
+  }
+}
+
+

@@ -1,0 +1,16 @@
+{
+  "name": "iot-device",
+  "version": "1.0.0",
+  "description": "",
+  "main": "device.js",
+  "scripts": {
+    "start": "node device.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.8.0"
+  }
+}
+
