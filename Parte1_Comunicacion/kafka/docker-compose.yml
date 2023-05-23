@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   zookeeper:
     image: bitnami/zookeeper:3.7.0
@@ -19,44 +19,36 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       ALLOW_PLAINTEXT_LISTENER: "yes"
 
-  device_1:
+  device:
     build: ./device
     restart: always
     depends_on:
       - kafka
     environment:
-      DEVICE_ID: 1
-      DELTA_T: 5000
+      DELTA_T: 300
       KAFKA_TOPIC: temperatures
     command: node device.js
+    deploy:
+      replicas: 4
 
-  device_2:
-    build: ./device
-    restart: always
-    depends_on:
-      - kafka
-    environment:
-      DEVICE_ID: 2
-      DELTA_T: 10000
-      KAFKA_TOPIC: temperatures
-    command: node device.js
-
-  consumer_1:
+  consumer:
     build: ./consumer
     restart: always
     depends_on:
-      - device_1
+      - device
     environment:
       KAFKA_TOPIC: temperatures
-      GROUP_ID: test-group1
+      GROUP_ID: test-group
     command: node consumer.js
+    deploy:
+      replicas: 2
 
-  consumer_2:
-    build: ./consumer
-    restart: always
-    depends_on:
-      - device_1
-    environment:
-      KAFKA_TOPIC: temperatures
-      GROUP_ID: test-group2
-    command: node consumer.js
+  #kafka-setup:
+  #  image: bitnami/kafka:2.8.1
+  #  depends_on:
+  #    - kafka
+  #  command: >
+  #    bash -c "
+  #    kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 3 --topic temperatures && 
+  #    sleep infinity"
+

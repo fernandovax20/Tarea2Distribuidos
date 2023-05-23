@@ -1,5 +1,6 @@
 // device.js
 const { Kafka } = require('kafkajs')
+const { v4: uuidv4 } = require('uuid')
 
 const kafka = new Kafka({
   clientId: 'my-app',
@@ -7,29 +8,29 @@ const kafka = new Kafka({
 })
 
 const topic = 'temperatures'
-const deviceId = process.env.DEVICE_ID || '1'
+const deviceId = "Grupox"//uuidv4().substring(0,3);
 const deltaT = process.env.DELTA_T ||5000;
 
 const producer = kafka.producer()
 
 const produceMessage = async () => {
-  await producer.send({
-    topic: topic,
-    messages: [
-      { value: JSON.stringify({ device_id: deviceId, timestamp: Date.now(), values: {data: generarCadenaAleatoria(Math.floor(Math.random() * 10) + 1)} }) },
-    ],
-  })
-  //console.log(`Device ${deviceId} produced message`)
-  setTimeout(produceMessage, deltaT)
-}
 
-function generarCadenaAleatoria(longitud) {
-  var caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var cadenaAleatoria = '';
-  for (var i = 0; i < longitud; i++) {
-      cadenaAleatoria += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+  try {
+    let numeroAleatorio = Math.floor(Math.random() * 50) + 1;
+    let i = 0;
+    while(numeroAleatorio > i){
+      await producer.send({
+        topic: topic,
+        messages: [
+          { value: JSON.stringify({ device_id: deviceId, timestamp: Date.now(), values: {data: uuidv4() }})},
+        ],
+      })
+    i++;}
+    setTimeout(produceMessage, deltaT)
+  } catch (error) {
+    console.error(`Error producing message: ${error}`)
+    setTimeout(produceMessage, deltaT)
   }
-  return cadenaAleatoria;
 }
 
 const run = async () => {
@@ -38,3 +39,4 @@ const run = async () => {
 }
 
 run().catch(console.error)
+
