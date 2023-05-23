@@ -4,7 +4,9 @@
   "description": "",
   "main": "device.js",
   "dependencies": {
-    "kafkajs": "^1.15.0"
+    "kafkajs": "^1.15.0",
+    "prom-client": "^14.2.0",
+    "uuid": "^9.0.0"
   },
   "scripts": {
     "start": "node device.js"
