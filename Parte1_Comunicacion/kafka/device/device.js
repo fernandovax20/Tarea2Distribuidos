@@ -8,30 +8,46 @@ const kafka = new Kafka({
 })
 
 const topic = 'temperatures'
-const deviceId = "Grupox"//uuidv4().substring(0,3);
-const deltaT = process.env.DELTA_T ||5000;
+const deviceId = uuidv4().substring(0,3);
+const deltaT = 300;
 
 const producer = kafka.producer()
 
 const produceMessage = async () => {
-
   try {
-    let numeroAleatorio = Math.floor(Math.random() * 50) + 1;
     let i = 0;
-    while(numeroAleatorio > i){
+    while(200 > i){
+
+      let message;
+      // Generate an error every 10 seconds
+      //if (i % 2 === 0) {
+      if(true){
+        // Regular serializable message
+        message = { device_id: deviceId, timestamp: Date.now(), values: {data: uuidv4() }};
+      } else {
+        // Non-serializable message (circular reference)
+        message = { device_id: deviceId, timestamp: Date.now(), values: {data: uuidv4() }};
+        message.circularReference = message;
+      }
+
       await producer.send({
         topic: topic,
         messages: [
-          { value: JSON.stringify({ device_id: deviceId, timestamp: Date.now(), values: {data: uuidv4() }})},
+          { value: JSON.stringify(message) },
         ],
       })
-    i++;}
+      
+      i++;
+
+    }
+
     setTimeout(produceMessage, deltaT)
   } catch (error) {
     console.error(`Error producing message: ${error}`)
     setTimeout(produceMessage, deltaT)
   }
 }
+
 
 const run = async () => {
   await producer.connect()

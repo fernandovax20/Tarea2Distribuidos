@@ -1,0 +1,100 @@
+version: '3.7'
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.7.0
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+
+  kafka:
+    image: bitnami/kafka:2.8.1
+    restart: always
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+
+  device:
+    build: ./device
+    restart: always
+    depends_on:
+      - kafka
+    command: node device.js
+    deploy:
+      replicas: 4
+
+  consumer_temperature:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      KAFKA_TOPIC: temperatures
+      GROUP_ID: test-group-temperature
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
+
+  consumer_humidity:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      KAFKA_TOPIC: humidity
+      GROUP_ID: test-group-humidity
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
+
+  consumer_co2:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      KAFKA_TOPIC: co2
+      GROUP_ID: test-group-co2
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
+
+  consumer_light_sensor:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      KAFKA_TOPIC: light-sensor
+      GROUP_ID: test-group-light-sensor
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
+
+  consumer_ph:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      KAFKA_TOPIC: ph
+      GROUP_ID: test-group-ph
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/

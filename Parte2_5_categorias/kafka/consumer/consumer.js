@@ -8,8 +8,8 @@ const kafka = new Kafka({
   brokers: ['kafka:9092']
 })
 
-const topic = 'temperatures'
-const groupId = uuidv4().substring(0, 6)
+const topic = process.env.KAFKA_TOPIC
+const groupId = process.env.GROUP_ID
 
 const consumer = kafka.consumer({ groupId: groupId })
 
@@ -39,7 +39,7 @@ const run = async () => {
       await consumer.connect()
       
       // Una vez conectado, establezca el temporizador.
-      disconnectTimer = setTimeout(disconnectAfterTimeout, 1 * 60 * 1000); // 2 minutos de tiempo de espera
+      disconnectTimer = setTimeout(disconnectAfterTimeout, 4 * 60 * 1000); // 2 minutos de tiempo de espera
       
       await consumer.subscribe({ topic: topic, fromBeginning: true })
 
@@ -59,7 +59,7 @@ const run = async () => {
               }
               );
             }
-            setTimeout(saveToFile, 30 * 1000); // 30 segundos de retraso
+            setTimeout(saveToFile, 3 * 60 * 1000); // 30 segundos de retraso
           });
 
         },
