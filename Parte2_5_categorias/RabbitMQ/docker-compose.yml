@@ -1,0 +1,82 @@
+version: '3.7'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  device:
+    build: ./device
+    restart: always
+    depends_on:
+      - rabbitmq
+    command: node device.js
+    deploy:
+      replicas: 4
+
+  consumer_temperatures:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      RABBITMQ_TOPIC: temperatures
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
+
+  consumer_humidity:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      RABBITMQ_TOPIC: humidity
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
+
+  consumer_co2:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      RABBITMQ_TOPIC: co2
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
+
+  consumer_light_sensor:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      RABBITMQ_TOPIC: light-sensor
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
+
+  consumer_ph:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - device
+    environment:
+      RABBITMQ_TOPIC: ph
+    command: node consumer.js
+    deploy:
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/

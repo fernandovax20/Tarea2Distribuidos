@@ -24,9 +24,6 @@ services:
     restart: always
     depends_on:
       - kafka
-    environment:
-      DELTA_T: 300
-      KAFKA_TOPIC: temperatures
     command: node device.js
     deploy:
       replicas: 4
@@ -36,19 +33,18 @@ services:
     restart: always
     depends_on:
       - device
-    environment:
-      KAFKA_TOPIC: temperatures
-      GROUP_ID: test-group
     command: node consumer.js
     deploy:
-      replicas: 2
+      replicas: 1
+    volumes:
+      - ./consumer/data/:/usr/src/app/data/
 
-  #kafka-setup:
-  #  image: bitnami/kafka:2.8.1
-  #  depends_on:
-  #    - kafka
-  #  command: >
-  #    bash -c "
-  #    kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 3 --topic temperatures && 
-  #    sleep infinity"
+  kafka-setup:
+    image: bitnami/kafka:2.8.1
+    depends_on:
+      - kafka
+    command: >
+      bash -c "
+      kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic temperatures && 
+      sleep infinity"
 
