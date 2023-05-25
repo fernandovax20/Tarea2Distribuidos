@@ -3,10 +3,12 @@
 Este repositorio contiene la implementación de una comunicación de tipo producer-consumer y la separación en 5 categorías. A continuación, se detallan estas partes.
 
 ## Tecnologías Utilizadas
-<img src="https://www.docker.com/wp-content/uploads/2022/03/horizontal-logo-monochromatic-white.png" width="300" height="80">
-<img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" width="300" height="80">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Apache_kafka_wordtype.svg" width="300" height="80">
-<img src="https://cdn.freebiesupply.com/logos/large/2x/rabbitmq-logo-black-and-white.png" width="80" height="80">
+
+| | | | |
+|:---:|:---:|:---:|:---:|
+| <img src="https://www.docker.com/wp-content/uploads/2022/03/horizontal-logo-monochromatic-white.png" width="300" height="80"> | <img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg" width="300" height="80"> | <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Apache_kafka_wordtype.svg" width="300" height="80"> | <img src="https://cdn.freebiesupply.com/logos/large/2x/rabbitmq-logo-black-and-white.png" width="80" height="80"> |
+| Docker | Node.js | Kafka | RabbitMQ |
+
 
 ## Parte 1: Implementación de Comunicación Producer-Consumer
 
